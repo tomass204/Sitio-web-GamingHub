@@ -1,0 +1,3 @@
+- [x] Add HTML for moderator request section in register form (rules and textarea, hidden by default)
+- [x] Add JavaScript event listener for role select to show/hide moderator fields
+- [x] Modify register function to handle moderator selection: send email, register as UsuarioBasico, show pending message
