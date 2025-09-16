@@ -6,6 +6,7 @@
     <title>GamingHub</title>
     <link rel="stylesheet" href="CSS/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
     <div id="login-container">
@@ -33,6 +34,7 @@
                     <option value="UsuarioBasico">Usuario Básico</option>
                     <option value="Influencer">Influencer</option>
                     <option value="Moderador">Moderador</option>
+                    <option value="Propietario">Propietario</option>
                 </select>
                 <div id="moderator-request" style="display: none;">
                     <h4>Reglas para Moderadores:</h4>
@@ -132,16 +134,6 @@
 
         <section id="games" class="section tab-content">
             <h2>Juegos Populares</h2>
-            <p>Explora juegos populares por categoría.</p>
-            <select id="game-category-filter">
-                <option value="all">Todas las categorías</option>
-                <option value="action">Acción</option>
-                <option value="strategy">Estrategia</option>
-                <option value="adventure">Aventura</option>
-                <option value="simulation">Simulación</option>
-                <option value="sports">Deportes</option>
-                <option value="rpg">RPG</option>
-            </select>
             <div class="game-gallery" id="game-gallery"></div>
             <div id="game-form-container" style="display:none;">
                 <h3>Publicar juego</h3>
@@ -167,7 +159,6 @@
         </section>
     </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="js/main.js"></script>
 
     <footer>

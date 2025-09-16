@@ -31,12 +31,15 @@ let currentUser = null;
 let users = JSON.parse(localStorage.getItem('gaminghub_users')) || {
     'basic@gaminghub.com': { password: 'pass', role: 'UsuarioBasico', warnings: 0, profilePic: 'img/UsuarioBasico.png', username: 'UsuarioBasico' },
     'influencer@gaminghub.com': { password: 'pass', role: 'Influencer', warnings: 0, profilePic: 'img/Influencer.png', username: 'Influencer' },
-    'moderator@gaminghub.com': { password: 'pass', role: 'Moderador', warnings: 0, profilePic: 'img/Moderador.png', username: 'Moderador' }
+    'moderator@gaminghub.com': { password: 'pass', role: 'Moderador', warnings: 0, profilePic: 'img/Moderador.png', username: 'Moderador' },
+    'tomasgarrido512@gmail.com': { password: 'pass', role: 'Propietario', warnings: 0, profilePic: 'img/Propietario.png', username: 'Propietario' }
 };
 
 let favorites = JSON.parse(localStorage.getItem('gaminghub_favorites')) || [];
 
 let pendingRequests = JSON.parse(localStorage.getItem('gaminghub_pending')) || [];
+
+// Using Formspree for notifications to moderator
 
 window.addEventListener('beforeunload', () => {
     localStorage.setItem('scrollPosition', window.scrollY);
@@ -64,6 +67,8 @@ function getRoleProfilePic(userEmail) {
             return 'img/Influencer.png';
         case 'Moderador':
             return 'img/Moderador.png';
+        case 'Propietario':
+            return 'img/Propietario.png';
         case 'UsuarioBasico':
         default:
             return 'img/UsuarioBasico.png';
@@ -71,6 +76,40 @@ function getRoleProfilePic(userEmail) {
 }
 
 window.addEventListener('load', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    const email = urlParams.get('email');
+    const username = urlParams.get('username');
+
+    if (action && email && username) {
+        if (action === 'approve' && (currentRole === 'Moderador' || currentRole === 'Propietario')) {
+            // Find and approve the request
+            const index = pendingRequests.findIndex(req => req.email === email && req.username === username);
+            if (index !== -1) {
+                users[email] = {
+                    password: 'moderator123',
+                    username: username,
+                    role: 'Moderador',
+                    warnings: 0,
+                    profilePic: 'img/Moderador.png'
+                };
+                saveUsers();
+                pendingRequests.splice(index, 1);
+                savePending();
+                alert('Solicitud aprobada desde el email.');
+            }
+        } else if (action === 'reject' && (currentRole === 'Moderador' || currentRole === 'Propietario')) {
+            const index = pendingRequests.findIndex(req => req.email === email && req.username === username);
+            if (index !== -1) {
+                pendingRequests.splice(index, 1);
+                savePending();
+                alert('Solicitud rechazada desde el email.');
+            }
+        }
+        // Clean URL
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+
     const savedUser = localStorage.getItem('currentUser');
     const savedRole = localStorage.getItem('currentRole');
     if (savedUser && savedRole && users[savedUser]) {
@@ -129,18 +168,32 @@ window.addEventListener('load', () => {
 const news = JSON.parse(localStorage.getItem('gaminghub_news')) || [
     { title: 'Nueva temporada de Clash Royale', content: 'Supercell lanza la temporada de invierno con nuevas cartas y desafíos.', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
     { title: 'Actualización épica de Fortnite', content: 'Capítulo 5 trae mapas nuevos y colaboraciones con Roblox.', comments: [], image: 'img/fortnite.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Eventos especiales en Roblox', content: 'Fiestas temáticas y premios exclusivos para los jugadores.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' }
+    { title: 'Eventos especiales en Roblox', content: 'Fiestas temáticas y premios exclusivos para los jugadores.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
+    { title: 'Nuevo juego de Batman anunciado', content: 'DC Comics revela el próximo título de Batman con gráficos revolucionarios.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
+    { title: 'Outlast Trials: Nuevo horror cooperativo', content: 'Red Barrels lanza Outlast Trials, un juego de horror en primera persona con modo cooperativo.', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
+    { title: 'Nuevo evento en Brawl Stars', content: 'Supercell lanza un evento especial en Brawl Stars con nuevos personajes y desafíos.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { title: 'Actualización de Brawl Stars', content: 'Nueva temporada en Brawl Stars con brawlers exclusivos y modos de juego emocionantes.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { title: 'Nueva actualización de Minecraft', content: 'Mojang Studios lanza una nueva actualización con biomas, mobs y características innovadoras.', comments: [], image: 'img/Minecraft.png', author: 'influencer@gaminghub.com' }
 ];
 
 const debates = JSON.parse(localStorage.getItem('gaminghub_debates')) || [
     { title: '¿Clash Royale o Fortnite?', content: '¿Cuál es mejor para batallas rápidas?', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Roblox: ¿Juego o plataforma?', content: 'Debate sobre el futuro de los juegos creados por usuarios.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' }
+    { title: 'Roblox: ¿Juego o plataforma?', content: 'Debate sobre el futuro de los juegos creados por usuarios.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
+    { title: '¿Batman: Arkham o Injustice?', content: 'Debate sobre cuál saga de Batman es superior.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
+    { title: '¿Outlast Trials: Terror cooperativo?', content: '¿Es Outlast Trials el mejor juego de horror cooperativo del momento?', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
+    { title: '¿Brawl Stars o Clash Royale?', content: '¿Cuál es mejor para batallas estratégicas?', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { title: '¿Brawl Stars: Estrategia o acción?', content: 'Debate sobre si Brawl Stars es más estratégico o de acción pura.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { title: '¿Minecraft: Creatividad o supervivencia?', content: 'Debate sobre si Minecraft es más sobre creatividad o supervivencia.', comments: [], image: 'img/Minecraft.png', author: 'influencer@gaminghub.com' }
 ];
 
 const games = JSON.parse(localStorage.getItem('gaminghub_games')) || [
     { title: 'Clash Royale', category: 'strategy', description: 'Juego de estrategia en tiempo real.', image: 'img/ClashRoyale.png', author: 'influencer@gaminghub.com' },
     { title: 'Fortnite', category: 'action', description: 'Battle royale con construcción.', image: 'img/Fornite.png', author: 'influencer@gaminghub.com' },
-    { title: 'Roblox', category: 'adventure', description: 'Plataforma de juegos creados por usuarios.', image: 'img/Roblox.png', author: 'influencer@gaminghub.com' }
+    { title: 'Roblox', category: 'adventure', description: 'Plataforma de juegos creados por usuarios.', image: 'img/Roblox.png', author: 'influencer@gaminghub.com' },
+    { title: 'Batman', category: 'action', description: 'Juego de acción y aventura con el Caballero Oscuro.', image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
+    { title: 'Outlast Trials', category: 'horror', description: 'Juego de horror cooperativo en primera persona.', image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
+    { title: 'Brawl Stars', category: 'strategy', description: 'Juego de batalla multijugador en tiempo real con personajes únicos.', image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { title: 'Minecraft', category: 'adventure', description: 'Juego de construcción y exploración en un mundo abierto.', image: 'img/Minecraft.png', author: 'influencer@gaminghub.com' }
 ];
 
 function saveNews() {
@@ -207,7 +260,7 @@ function createCommentElement(comment, debateIndex = null, newsIndex = null) {
         commentDiv.appendChild(favoriteBtn);
     }
 
-    if (currentRole === 'Moderador') {
+    if (currentRole === 'Moderador' || currentRole === 'Propietario') {
         const warnBtn = document.createElement('button');
         warnBtn.className = 'warn-btn';
         warnBtn.textContent = 'Advertir';
@@ -461,16 +514,42 @@ function displayPendingRequests() {
             savePending();
             displayPendingRequests();
             alert('Solicitud aprobada. Usuario creado con contraseña "moderator123".');
+
+            // Send email to user
+            emailjs.send('your_service_id', 'your_template_id', {
+                to_email: request.email,
+                subject: 'Solicitud de Moderador Aprobada',
+                message: 'Tu solicitud ha sido aprobada. Inicia sesión aquí: https://gaminghub.com con tu email y contraseña moderator123.'
+            }).then(() => {
+                alert('Email enviado al usuario.');
+            }, (error) => {
+                console.error('Error sending email:', error);
+            });
         };
         itemDiv.appendChild(approveBtn);
 
         const rejectBtn = document.createElement('button');
         rejectBtn.textContent = 'Rechazar';
         rejectBtn.onclick = () => {
-            pendingRequests.splice(index, 1);
-            savePending();
-            displayPendingRequests();
-            alert('Solicitud rechazada.');
+            const comment = prompt('Razón para rechazar la solicitud (opcional):');
+            if (comment !== null) {
+                // Optionally, store the comment or send email
+                pendingRequests.splice(index, 1);
+                savePending();
+                displayPendingRequests();
+                alert('Solicitud rechazada.');
+
+                // Send email to user
+                emailjs.send('your_service_id', 'your_template_id', {
+                    to_email: request.email,
+                    subject: 'Solicitud de Moderador Rechazada',
+                    message: `Lo lamento, tu solicitud ha sido rechazada. Razón: ${comment || 'No especificada'}. No podrás ser moderador.`
+                }).then(() => {
+                    alert('Email enviado al usuario.');
+                }, (error) => {
+                    console.error('Error sending email:', error);
+                });
+            }
         };
         itemDiv.appendChild(rejectBtn);
 
@@ -484,7 +563,7 @@ function updateUI() {
     displayGames();
     displayFavorites();
 
-    if (currentRole === 'Moderador') {
+    if (currentRole === 'Moderador' || currentRole === 'Propietario') {
         document.getElementById('moderator-section').style.display = 'block';
         displayPendingRequests();
     } else {
@@ -594,11 +673,31 @@ registerBtn.addEventListener('click', () => {
         // Show success ticket
         showSuccessTicket('Solicitud en proceso');
 
-        // Send email using mailto
-        const subject = encodeURIComponent(`Solicitud de Moderador de ${username}`);
-        const body = encodeURIComponent(`Solicitud de ${username} (${email}): ${reason}`);
-        window.open(`mailto:tomasgarrido512@gmail.com?subject=${subject}&body=${body}`, '_blank');
-        alert('Solicitud preparada. Envía el email desde tu cliente de email.');
+        // Send request using Formspree
+        const form = document.createElement('form');
+        form.action = 'https://formspree.io/f/mvgbnlyj';
+        form.method = 'POST';
+        form.style.display = 'none';
+
+        const emailInput = document.createElement('input');
+        emailInput.type = 'email';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+
+        const usernameInput = document.createElement('input');
+        usernameInput.type = 'text';
+        usernameInput.name = 'username';
+        usernameInput.value = username;
+        form.appendChild(usernameInput);
+
+        const reasonInput = document.createElement('textarea');
+        reasonInput.name = 'reason';
+        reasonInput.value = reason;
+        form.appendChild(reasonInput);
+
+        document.body.appendChild(form);
+        form.submit();
 
         // Clear the form fields
         document.getElementById('register-email').value = '';

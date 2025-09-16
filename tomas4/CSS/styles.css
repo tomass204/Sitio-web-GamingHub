@@ -342,11 +342,11 @@ button:hover {
 }
 
 #logout-btn {
-    background: linear-gradient(135deg, #f44336 0%, #ef5350 100%);
+    background: linear-gradient(135deg, #333333 0%, #555555 100%);
 }
 
 #logout-btn:hover {
-    background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+    background: linear-gradient(135deg, #222222 0%, #444444 100%);
 }
 
 .comments {

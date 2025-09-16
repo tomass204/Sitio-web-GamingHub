@@ -1,3 +1,6 @@
-- [x] Add HTML for moderator request section in register form (rules and textarea, hidden by default)
-- [x] Add JavaScript event listener for role select to show/hide moderator fields
-- [x] Modify register function to handle moderator selection: send email, register as UsuarioBasico, show pending message
+- [x] Add "Propietario" option to register role select in index.html
+- [x] Add default owner user in main.js users object
+- [x] Update getRoleProfilePic function to handle 'Propietario' role, using 'img/Moderador.png'
+- [x] Modify updateUI function to show moderator-section for 'Propietario' role as well
+- [x] Update approve/reject request functions to include 'Propietario'
+- [x] Test login as owner and verify requests display
