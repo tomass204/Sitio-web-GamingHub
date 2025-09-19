@@ -1,12 +1,9 @@
-const COMMENTS_API_BASE_URL = 'http://localhost:8087';
+const COMMENTS_API_BASE_URL = 'http://localhost:8087/api/GamingHub/v1/Comentarios';
 
 class CommentsAPI {
     static async getCommentsByPublication(publicationId) {
-        const response = await fetch(`${COMMENTS_API_BASE_URL}/comentarios/publicacion/${publicationId}`, {
+        const response = await fetch(`${COMMENTS_API_BASE_URL}/${publicationId}`, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
         });
         if (!response.ok) {
             throw new Error('Failed to get comments');
@@ -15,11 +12,10 @@ class CommentsAPI {
     }
 
     static async createComment(commentData) {
-        const response = await fetch(`${COMMENTS_API_BASE_URL}/comentarios`, {
+        const response = await fetch(`${COMMENTS_API_BASE_URL}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
             body: JSON.stringify(commentData),
         });
@@ -30,11 +26,10 @@ class CommentsAPI {
     }
 
     static async updateComment(commentId, commentData) {
-        const response = await fetch(`${COMMENTS_API_BASE_URL}/comentarios/${commentId}`, {
+        const response = await fetch(`${COMMENTS_API_BASE_URL}/${commentId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
             body: JSON.stringify(commentData),
         });
@@ -45,11 +40,8 @@ class CommentsAPI {
     }
 
     static async deleteComment(commentId) {
-        const response = await fetch(`${COMMENTS_API_BASE_URL}/comentarios/${commentId}`, {
+        const response = await fetch(`${COMMENTS_API_BASE_URL}/${commentId}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
         });
         if (!response.ok) {
             throw new Error('Failed to delete comment');

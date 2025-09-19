@@ -24,6 +24,20 @@ const espacios = {
 };
 
 
+const theme = 'light';
+
+if (theme === 'dark') {
+  console.log('Dark theme loaded');
+} else {
+  console.log('Light theme loaded');
+}
+
 const firstname = "Tomas";
+console.log(firstname);
+
+// Error checks
+if (!colores.primary) console.log('Error: primary color not defined');
+if (!fuentes.principal) console.log('Error: principal font not defined');
+if (!espacios.paddingBoton) console.log('Error: button padding not defined');
 
 export { colores, fuentes, espacios, firstname };

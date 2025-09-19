@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GamingHub</title>
+    <title>GamingHub - Iniciar Sesión</title>
     <link rel="stylesheet" href="CSS/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -67,7 +67,7 @@
             </header>
 
         <nav id="tabs">
-            <button class="tab-button active" data-tab="profile"><i class="fas fa-user"></i> Perfil</button>
+            <button class="tab-button" data-tab="profile"><i class="fas fa-user"></i> Perfil</button>
             <button class="tab-button" data-tab="news"><i class="fas fa-newspaper"></i> Noticias</button>
             <button class="tab-button" data-tab="debates"><i class="fas fa-comments"></i> Debates</button>
             <button class="tab-button" data-tab="games"><i class="fas fa-gamepad"></i> Juegos</button>
@@ -75,7 +75,7 @@
             <button class="tab-button" data-tab="about"><i class="fas fa-info-circle"></i> Acerca de</button>
         </nav>
 
-        <section id="profile" class="section tab-content active">
+        <section id="profile" class="section tab-content">
             <h2>Perfil de Usuario</h2>
             <p>Administra tu perfil y configuración.</p>
             <div class="profile-pic-container">
@@ -112,10 +112,15 @@
             <div id="news-list"></div>
             <div id="news-form-container" style="display:none;">
                 <h3>Publicar noticia</h3>
-                <input type="text" id="news-title" placeholder="Título de la noticia" />
-                <textarea id="news-content" placeholder="Contenido de la noticia"></textarea>
-                <input type="file" id="news-image" accept="image/*" />
-                <button id="post-news-btn">Publicar</button>
+                <form id="news-form">
+                    <label for="news-title">Título:</label>
+                    <input type="text" id="news-title" name="title" placeholder="Título de la noticia" required />
+                    <label for="news-content">Contenido:</label>
+                    <textarea id="news-content" name="content" placeholder="Contenido de la noticia" required></textarea>
+                    <label for="news-image">Imagen:</label>
+                    <input type="file" id="news-image" name="image" accept="image/*" />
+                    <button type="submit">Publicar</button>
+                </form>
             </div>
         </section>
 
@@ -125,10 +130,15 @@
             <div id="debate-list"></div>
             <div id="debate-form-container" style="display:none;">
                 <h3>Crear debate</h3>
-                <input type="text" id="debate-title" placeholder="Título del debate" />
-                <textarea id="debate-content" placeholder="Contenido del debate"></textarea>
-                <input type="file" id="debate-image" accept="image/*" />
-                <button id="post-debate-btn">Crear debate</button>
+                <form id="debate-form">
+                    <label for="debate-title">Título:</label>
+                    <input type="text" id="debate-title" name="title" placeholder="Título del debate" required />
+                    <label for="debate-content">Contenido:</label>
+                    <textarea id="debate-content" name="content" placeholder="Contenido del debate" required></textarea>
+                    <label for="debate-image">Imagen:</label>
+                    <input type="file" id="debate-image" name="image" accept="image/*" />
+                    <button type="submit">Crear debate</button>
+                </form>
             </div>
         </section>
 
@@ -137,18 +147,24 @@
             <div class="game-gallery" id="game-gallery"></div>
             <div id="game-form-container" style="display:none;">
                 <h3>Publicar juego</h3>
-                <input type="text" id="game-title" placeholder="Nombre del juego" />
-                <select id="game-category">
-                    <option value="action">Acción</option>
-                    <option value="strategy">Estrategia</option>
-                    <option value="adventure">Aventura</option>
-                    <option value="simulation">Simulación</option>
-                    <option value="sports">Deportes</option>
-                    <option value="rpg">RPG</option>
-                </select>
-                <textarea id="game-description" placeholder="Descripción del juego"></textarea>
-                <input type="file" id="game-image" accept="image/*" />
-                <button id="post-game-btn">Publicar Juego</button>
+                <form id="game-form">
+                    <label for="game-title">Nombre del juego:</label>
+                    <input type="text" id="game-title" name="title" placeholder="Nombre del juego" required />
+                    <label for="game-category">Categoría:</label>
+                    <select id="game-category" name="category">
+                        <option value="action">Acción</option>
+                        <option value="strategy">Estrategia</option>
+                        <option value="adventure">Aventura</option>
+                        <option value="simulation">Simulación</option>
+                        <option value="sports">Deportes</option>
+                        <option value="rpg">RPG</option>
+                    </select>
+                    <label for="game-description">Descripción:</label>
+                    <textarea id="game-description" name="description" placeholder="Descripción del juego" required></textarea>
+                    <label for="game-image">Imagen:</label>
+                    <input type="file" id="game-image" name="image" accept="image/*" />
+                    <button type="submit">Publicar Juego</button>
+                </form>
             </div>
         </section>
 

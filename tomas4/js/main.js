@@ -166,24 +166,24 @@ window.addEventListener('load', () => {
 });
 
 const news = JSON.parse(localStorage.getItem('gaminghub_news')) || [
-    { title: 'Nueva temporada de Clash Royale', content: 'Supercell lanza la temporada de invierno con nuevas cartas y desafíos.', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Actualización épica de Fortnite', content: 'Capítulo 5 trae mapas nuevos y colaboraciones con Roblox.', comments: [], image: 'img/fortnite.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Eventos especiales en Roblox', content: 'Fiestas temáticas y premios exclusivos para los jugadores.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Nuevo juego de Batman anunciado', content: 'DC Comics revela el próximo título de Batman con gráficos revolucionarios.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
-    { title: 'Outlast Trials: Nuevo horror cooperativo', content: 'Red Barrels lanza Outlast Trials, un juego de horror en primera persona con modo cooperativo.', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
-    { title: 'Nuevo evento en Brawl Stars', content: 'Supercell lanza un evento especial en Brawl Stars con nuevos personajes y desafíos.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
-    { title: 'Actualización de Brawl Stars', content: 'Nueva temporada en Brawl Stars con brawlers exclusivos y modos de juego emocionantes.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
-    { title: 'Nueva actualización de Minecraft', content: 'Mojang Studios lanza una nueva actualización con biomas, mobs y características innovadoras.', comments: [], image: 'img/Minecraft.png', author: 'influencer@gaminghub.com' }
+    { id: 1, title: 'Nueva temporada de Clash Royale', content: 'Supercell lanza la temporada de invierno con nuevas cartas y desafíos.', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
+    { id: 2, title: 'Actualización épica de Fortnite', content: 'Capítulo 5 trae mapas nuevos y colaboraciones con Roblox.', comments: [], image: 'img/fortnite.jpg', author: 'influencer@gaminghub.com' },
+    { id: 3, title: 'Eventos especiales en Roblox', content: 'Fiestas temáticas y premios exclusivos para los jugadores.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
+    { id: 4, title: 'Nuevo juego de Batman anunciado', content: 'DC Comics revela el próximo título de Batman con gráficos revolucionarios.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
+    { id: 5, title: 'Outlast Trials: Nuevo horror cooperativo', content: 'Red Barrels lanza Outlast Trials, un juego de horror en primera persona con modo cooperativo.', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
+    { id: 6, title: 'Nuevo evento en Brawl Stars', content: 'Supercell lanza un evento especial en Brawl Stars con nuevos personajes y desafíos.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { id: 7, title: 'Actualización de Brawl Stars', content: 'Nueva temporada en Brawl Stars con brawlers exclusivos y modos de juego emocionantes.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { id: 8, title: 'Nueva actualización de Minecraft', content: 'Mojang Studios lanza una nueva actualización con biomas, mobs y características innovadoras.', comments: [], image: 'img/Minecraft.png', author: 'influencer@gaminghub.com' }
 ];
 
 const debates = JSON.parse(localStorage.getItem('gaminghub_debates')) || [
-    { title: '¿Clash Royale o Fortnite?', content: '¿Cuál es mejor para batallas rápidas?', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Roblox: ¿Juego o plataforma?', content: 'Debate sobre el futuro de los juegos creados por usuarios.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
-    { title: '¿Batman: Arkham o Injustice?', content: 'Debate sobre cuál saga de Batman es superior.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
-    { title: '¿Outlast Trials: Terror cooperativo?', content: '¿Es Outlast Trials el mejor juego de horror cooperativo del momento?', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
-    { title: '¿Brawl Stars o Clash Royale?', content: '¿Cuál es mejor para batallas estratégicas?', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
-    { title: '¿Brawl Stars: Estrategia o acción?', content: 'Debate sobre si Brawl Stars es más estratégico o de acción pura.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
-    { title: '¿Minecraft: Creatividad o supervivencia?', content: 'Debate sobre si Minecraft es más sobre creatividad o supervivencia.', comments: [], image: 'img/Minecraft.png', author: 'influencer@gaminghub.com' }
+    { id: 1, title: '¿Clash Royale o Fortnite?', content: '¿Cuál es mejor para batallas rápidas?', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
+    { id: 2, title: 'Roblox: ¿Juego o plataforma?', content: 'Debate sobre el futuro de los juegos creados por usuarios.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
+    { id: 3, title: '¿Batman: Arkham o Injustice?', content: 'Debate sobre cuál saga de Batman es superior.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
+    { id: 4, title: '¿Outlast Trials: Terror cooperativo?', content: '¿Es Outlast Trials el mejor juego de horror cooperativo del momento?', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
+    { id: 5, title: '¿Brawl Stars o Clash Royale?', content: '¿Cuál es mejor para batallas estratégicas?', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { id: 6, title: '¿Brawl Stars: Estrategia o acción?', content: 'Debate sobre si Brawl Stars es más estratégico o de acción pura.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
+    { id: 7, title: '¿Minecraft: Creatividad o supervivencia?', content: 'Debate sobre si Minecraft es más sobre creatividad o supervivencia.', comments: [], image: 'img/Minecraft.png', author: 'influencer@gaminghub.com' }
 ];
 
 const games = JSON.parse(localStorage.getItem('gaminghub_games')) || [
@@ -280,15 +280,13 @@ function createCommentElement(comment, debateIndex = null, newsIndex = null) {
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = 'Eliminar';
-        deleteBtn.onclick = () => {
-            if (debateIndex !== null) {
-                debates[debateIndex].comments = debates[debateIndex].comments.filter(c => c.id !== comment.id);
-                saveDebates();
-            } else if (newsIndex !== null) {
-                news[newsIndex].comments = news[newsIndex].comments.filter(c => c.id !== comment.id);
-                saveNews();
+        deleteBtn.onclick = async () => {
+            try {
+                await CommentsAPI.deleteComment(comment.id);
+                commentDiv.remove();
+            } catch (e) {
+                console.error('Failed to delete comment', e);
             }
-            commentDiv.remove();
         };
         commentDiv.appendChild(deleteBtn);
     }
@@ -296,9 +294,9 @@ function createCommentElement(comment, debateIndex = null, newsIndex = null) {
     return commentDiv;
 }
 
-function displayNews() {
+async function displayNews() {
     newsList.innerHTML = '';
-    news.forEach((item, index) => {
+    for (const item of news) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'news-item';
 
@@ -329,40 +327,64 @@ function displayNews() {
 
         const commentsDiv = document.createElement('div');
         commentsDiv.className = 'comments';
-        item.comments.forEach(comment => {
-            commentsDiv.appendChild(createCommentElement(comment, null, index));
-        });
+
+        // Fetch comments from API
+        try {
+            const apiComments = await CommentsAPI.getCommentsByPublication(item.id);
+            // Map API comments to local format
+            const mappedComments = apiComments._embedded.comentarios.map(c => ({
+                id: c.comentarioID,
+                text: c.contenido,
+                author: c.autorID,
+                likes: 0,
+                liked: false
+            }));
+            mappedComments.forEach(comment => {
+                commentsDiv.appendChild(createCommentElement(comment, null, news.indexOf(item)));
+            });
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+        }
 
         const commentForm = document.createElement('form');
         commentForm.innerHTML = `
             <input type="text" placeholder="Escribe un comentario..." required>
             <button type="submit">Comentar</button>
         `;
-        commentForm.onsubmit = (e) => {
+        commentForm.onsubmit = async (e) => {
             e.preventDefault();
             const input = commentForm.querySelector('input');
-            const comment = {
-                id: Date.now(),
-                text: input.value,
-                author: currentUser,
-                likes: 0,
-                liked: false
+            const commentData = {
+                texto: input.value,
+                autor: currentUser,
+                publicacionId: item.id
             };
-            item.comments.push(comment);
-            saveNews();
-            commentsDiv.appendChild(createCommentElement(comment, null, index));
-            input.value = '';
+            try {
+                const newComment = await CommentsAPI.createComment(commentData);
+                const comment = {
+                    id: newComment._embedded.comentario.comentarioID,
+                    text: newComment._embedded.comentario.contenido,
+                    author: newComment._embedded.comentario.autorID,
+                    likes: 0,
+                    liked: false
+                };
+                commentsDiv.appendChild(createCommentElement(comment, null, news.indexOf(item)));
+                input.value = '';
+            } catch (error) {
+                alert('Error al crear el comentario');
+                console.error('Error creating comment:', error);
+            }
         };
 
         itemDiv.appendChild(commentsDiv);
         itemDiv.appendChild(commentForm);
         newsList.appendChild(itemDiv);
-    });
+    }
 }
 
-function displayDebates() {
+async function displayDebates() {
     debateList.innerHTML = '';
-    debates.forEach((item, index) => {
+    for (const item of debates) {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'debate-item';
 
@@ -393,35 +415,58 @@ function displayDebates() {
 
         const commentsDiv = document.createElement('div');
         commentsDiv.className = 'comments';
-        item.comments.forEach(comment => {
-            commentsDiv.appendChild(createCommentElement(comment, index, null));
-        });
+
+        // Fetch comments from API
+        try {
+            const apiComments = await CommentsAPI.getCommentsByPublication(item.id);
+            const mappedComments = apiComments._embedded.comentarios.map(c => ({
+                id: c.comentarioID,
+                text: c.contenido,
+                author: c.autorID,
+                likes: 0,
+                liked: false
+            }));
+            mappedComments.forEach(comment => {
+                commentsDiv.appendChild(createCommentElement(comment, debates.indexOf(item), null));
+            });
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+        }
 
         const commentForm = document.createElement('form');
         commentForm.innerHTML = `
             <input type="text" placeholder="Escribe un comentario..." required>
             <button type="submit">Comentar</button>
         `;
-        commentForm.onsubmit = (e) => {
+        commentForm.onsubmit = async (e) => {
             e.preventDefault();
             const input = commentForm.querySelector('input');
-            const comment = {
-                id: Date.now(),
-                text: input.value,
-                author: currentUser,
-                likes: 0,
-                liked: false
+            const commentData = {
+                texto: input.value,
+                autor: currentUser,
+                publicacionId: item.id
             };
-            item.comments.push(comment);
-            saveDebates();
-            commentsDiv.appendChild(createCommentElement(comment, index, null));
-            input.value = '';
+            try {
+                const newComment = await CommentsAPI.createComment(commentData);
+                const comment = {
+                    id: newComment._embedded.comentario.comentarioID,
+                    text: newComment._embedded.comentario.contenido,
+                    author: newComment._embedded.comentario.autorID,
+                    likes: 0,
+                    liked: false
+                };
+                commentsDiv.appendChild(createCommentElement(comment, debates.indexOf(item), null));
+                input.value = '';
+            } catch (error) {
+                alert('Error al crear el comentario');
+                console.error('Error creating comment:', error);
+            }
         };
 
         itemDiv.appendChild(commentsDiv);
         itemDiv.appendChild(commentForm);
         debateList.appendChild(itemDiv);
-    });
+    }
 }
 
 function displayGames() {
@@ -557,9 +602,9 @@ function displayPendingRequests() {
     });
 }
 
-function updateUI() {
-    displayNews();
-    displayDebates();
+async function updateUI() {
+    await displayNews();
+    await displayDebates();
     displayGames();
     displayFavorites();
 
@@ -631,6 +676,7 @@ loginBtn.addEventListener('click', () => {
         mainContent.style.display = 'block';
         localStorage.setItem('currentUser', currentUser);
         localStorage.setItem('currentRole', currentRole);
+        localStorage.setItem('token', 'dummy-token');
         updateUI();
         document.getElementById('profile-pic').src = users[currentUser].profilePic || getRoleProfilePic(currentUser);
     } else {
@@ -772,6 +818,7 @@ logoutBtn.addEventListener('click', () => {
     currentRole = null;
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentRole');
+    localStorage.removeItem('token');
     loginContainer.style.display = 'block';
     mainContent.style.display = 'none';
 });
@@ -818,29 +865,29 @@ document.querySelectorAll('.tab-button').forEach(button => {
 });
 
 // Form submissions
-document.getElementById('news-form').addEventListener('submit', (e) => {
+document.getElementById('news-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('news-title').value;
     const content = document.getElementById('news-content').value;
     const imageInput = document.getElementById('news-image');
     const image = imageInput.files[0] ? URL.createObjectURL(imageInput.files[0]) : 'img/default_news.jpg';
 
-    news.push({ title, content, comments: [], image, author: currentUser });
+    news.push({ id: Date.now(), title, content, comments: [], image, author: currentUser });
     saveNews();
-    updateUI();
+    await updateUI();
     e.target.reset();
 });
 
-document.getElementById('debate-form').addEventListener('submit', (e) => {
+document.getElementById('debate-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const title = document.getElementById('debate-title').value;
     const content = document.getElementById('debate-content').value;
     const imageInput = document.getElementById('debate-image');
     const image = imageInput.files[0] ? URL.createObjectURL(imageInput.files[0]) : 'img/default_debate.jpg';
 
-    debates.push({ title, content, comments: [], image, author: currentUser });
+    debates.push({ id: Date.now(), title, content, comments: [], image, author: currentUser });
     saveDebates();
-    updateUI();
+    await updateUI();
     e.target.reset();
 });
 
