@@ -1,6 +1,0 @@
-- [x] Add "Propietario" option to register role select in index.html
-- [x] Add default owner user in main.js users object
-- [x] Update getRoleProfilePic function to handle 'Propietario' role, using 'img/Moderador.png'
-- [x] Modify updateUI function to show moderator-section for 'Propietario' role as well
-- [x] Update approve/reject request functions to include 'Propietario'
-- [x] Test login as owner and verify requests display
