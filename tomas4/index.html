@@ -17,6 +17,7 @@
                 <input type="email" id="login-email" placeholder="Ingresa tu correo electrónico" />
                 <label for="login-password">Contraseña:</label>
                 <input type="password" id="login-password" placeholder="Ingresa tu contraseña" />
+                <input type="checkbox" onclick="document.getElementById('login-password').type = this.checked ? 'text' : 'password'"> Mostrar contraseña
                 <button id="login-btn">Iniciar Sesión</button>
                 <p id="login-error" style="color: red; display: none;">Credenciales incorrectas</p>
                 <p><a href="#" id="show-register">¿No tienes cuenta? Regístrate</a></p>
