@@ -54,3 +54,6 @@ Este documento es un resumen de la Especificación de Requisitos de Software (SR
 - El sistema usa localStorage, lo que limita escalabilidad.
 - Futuras expansiones incluyen APIs externas y chat.
 - Asegurar compatibilidad con navegadores modernos.
+
+## Recordatorio
+- El sitio está corriendo en un servidor local. Accede a http://localhost:8000 para una URL más profesional en lugar de file://.

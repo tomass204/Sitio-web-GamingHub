@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="CSS/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
 </head>
 <body>
     <!-- Video de fondo -->
@@ -57,6 +61,15 @@
                 <p><a href="#" id="show-login">¿Ya tienes cuenta? Inicia Sesión</a></p>
             </div>
         </div>
+        <video id="login-video" autoplay muted loop style="width: 100%; max-width: 400px; margin: 20px auto; display: none; opacity: 0; transition: opacity 1s ease-in-out;">
+            <source src="img/Gato.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
+    </div>
+
+    <div id="ban-screen" style="display: none;">
+        <img src="img/Troll.png" alt="Banned" id="ban-image" />
+        <p>¡Estás baneado!</p>
     </div>
 
     <div id="main-content" style="display: none;">
@@ -210,5 +223,25 @@
     <footer>
         <p> © 2025 GamingHub. Todos los derechos reservados.</p>
     </footer>
+
+    <section id="reports" class="section tab-content" style="display:none; opacity:0; transition: opacity 0.5s ease-in-out;">
+        <h2>🚨 Reporte de Conductas Inadecuadas</h2>
+        <p>Se han detectado las siguientes alertas en la comunidad:</p>
+
+        <div class="alert-card danger">
+            <h3>Lenguaje ofensivo</h3>
+            <p>3 usuarios han sido reportados por uso de palabras inapropiadas.</p>
+        </div>
+
+        <div class="alert-card warning">
+            <h3>Spam o contenido repetitivo</h3>
+            <p>5 casos detectados en las últimas 24 horas.</p>
+        </div>
+
+        <div class="alert-card info">
+            <h3>Actividad sospechosa</h3>
+            <p>2 cuentas fueron marcadas por comportamiento irregular.</p>
+        </div>
+    </section>
 </body>
 </html>
