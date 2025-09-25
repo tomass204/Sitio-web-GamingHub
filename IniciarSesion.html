@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GamingHub - Iniciar Sesión</title>
+    <title>GamingHub - IniciarSesion</title>
     <link rel="stylesheet" href="CSS/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
+    <!-- Video de fondo -->
+    <video autoplay muted loop id="bgVideo" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.7; filter: brightness(0.6) contrast(1.1);">
+        <source src="img/Video.mp4" type="video/mp4">
+        Tu navegador no soporta el elemento de video.
+    </video>
+
     <div id="login-container">
         <div class="auth-form">
             <div id="login-form">
@@ -17,6 +23,7 @@
                 <input type="email" id="login-email" placeholder="Ingresa tu correo electrónico" />
                 <label for="login-password">Contraseña:</label>
                 <input type="password" id="login-password" placeholder="Ingresa tu contraseña" />
+                <input type="checkbox" onclick="document.getElementById('login-password').type = this.checked ? 'text' : 'password'"> Mostrar contraseña
                 <button id="login-btn">Iniciar Sesión</button>
                 <p id="login-error" style="color: red; display: none;">Credenciales incorrectas</p>
                 <p><a href="#" id="show-register">¿No tienes cuenta? Regístrate</a></p>
@@ -50,36 +57,35 @@
                 <p><a href="#" id="show-login">¿Ya tienes cuenta? Inicia Sesión</a></p>
             </div>
         </div>
-        </div>
+    </div>
 
     <div id="main-content" style="display: none;">
-            <header>
-                <img src="img/gaminghub_logo.png" alt="Gaming Hub Logo" id="logo" />
-                <div>
-                    <h1>GamingHub - Comunidad de Juegos</h1>
-                    <p>Debates, noticias y comunidad de juegos populares</p>
-                </div>
-                <div class="user-profile">
-                    <img id="profile-pic" src="img/default_profile.png" alt="Foto de Perfil" />
-                    <p>Bienvenido, <span id="user-role"></span></p>
-                </div>
-                <button id="logout-btn">Cerrar Sesión</button>
-            </header>
+        <header>
+            <img src="img/gaminghub_logo.png" alt="Gaming Hub Logo" id="logo" />
+            <div>
+                <h1>GamingHub - Comunidad de Juegos</h1>
+                <p>Debates, noticias y comunidad de juegos populares</p>
+            </div>
+            <div class="user-profile">
+                <img id="profile-pic" src="img/default_profile.png" alt="Foto de Perfil" />
+                <p>Bienvenido, <span id="user-role"></span></p>
+            </div>
+            <button id="logout-btn">Cerrar Sesión</button>
+        </header>
 
         <nav id="tabs">
             <button class="tab-button" data-tab="profile"><i class="fas fa-user"></i> Perfil</button>
             <button class="tab-button" data-tab="news"><i class="fas fa-newspaper"></i> Noticias</button>
             <button class="tab-button" data-tab="debates"><i class="fas fa-comments"></i> Debates</button>
             <button class="tab-button" data-tab="games"><i class="fas fa-gamepad"></i> Juegos</button>
-            <button class="tab-button" data-tab="favorites" id="favorites-tab" style="display:none;"><i class="fas fa-heart"></i> Favoritos</button>
+            <button class="tab-button active" data-tab="favorites" id="favorites-tab"><i class="fas fa-heart"></i> Favoritos</button>
             <button class="tab-button" data-tab="about"><i class="fas fa-info-circle"></i> Acerca de</button>
         </nav>
 
         <section id="profile" class="section tab-content">
             <h2>Perfil de Usuario</h2>
             <p>Administra tu perfil y configuración.</p>
-            <div class="profile-pic-container">
-            </div>
+            <div class="profile-pic-container"></div>
 
             <div class="profile-update-section">
                 <h3>Actualizar Información</h3>
@@ -110,7 +116,7 @@
             <h2>Noticias</h2>
             <p>Lee las últimas noticias sobre juegos.</p>
             <div id="news-list"></div>
-            <div id="news-form-container" style="display:none;">
+            <div id="news-form-container" style="display:block;">
                 <h3>Publicar noticia</h3>
                 <form id="news-form">
                     <label for="news-title">Título:</label>
@@ -168,7 +174,7 @@
             </div>
         </section>
 
-        <section id="favorites" class="section tab-content">
+        <section id="favorites" class="section tab-content active">
             <h2>Favoritos</h2>
             <p>Tus comentarios guardados.</p>
             <div id="favorites-list"></div>

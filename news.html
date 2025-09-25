@@ -9,6 +9,12 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
+    <!-- Video de fondo -->
+    <video autoplay muted loop id="bgVideo" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.7; filter: brightness(0.6) contrast(1.1);">
+        <source src="img/Video.mp4" type="video/mp4">
+        Tu navegador no soporta el elemento de video.
+    </video>
+
     <div id="login-container">
         <div class="auth-form">
             <div id="login-form">
@@ -17,6 +23,7 @@
                 <input type="email" id="login-email" placeholder="Ingresa tu correo electrónico" />
                 <label for="login-password">Contraseña:</label>
                 <input type="password" id="login-password" placeholder="Ingresa tu contraseña" />
+                <input type="checkbox" onclick="document.getElementById('login-password').type = this.checked ? 'text' : 'password'"> Mostrar contraseña
                 <button id="login-btn">Iniciar Sesión</button>
                 <p id="login-error" style="color: red; display: none;">Credenciales incorrectas</p>
                 <p><a href="#" id="show-register">¿No tienes cuenta? Regístrate</a></p>
@@ -50,36 +57,35 @@
                 <p><a href="#" id="show-login">¿Ya tienes cuenta? Inicia Sesión</a></p>
             </div>
         </div>
-        </div>
+    </div>
 
     <div id="main-content" style="display: none;">
-            <header>
-                <img src="img/gaminghub_logo.png" alt="Gaming Hub Logo" id="logo" />
-                <div>
-                    <h1>GamingHub - Comunidad de Juegos</h1>
-                    <p>Debates, noticias y comunidad de juegos populares</p>
-                </div>
-                <div class="user-profile">
-                    <img id="profile-pic" src="img/default_profile.png" alt="Foto de Perfil" />
-                    <p>Bienvenido, <span id="user-role"></span></p>
-                </div>
-                <button id="logout-btn">Cerrar Sesión</button>
-            </header>
+        <header>
+            <img src="img/gaminghub_logo.png" alt="Gaming Hub Logo" id="logo" />
+            <div>
+                <h1>GamingHub - Comunidad de Juegos</h1>
+                <p>Debates, noticias y comunidad de juegos populares</p>
+            </div>
+            <div class="user-profile">
+                <img id="profile-pic" src="img/default_profile.png" alt="Foto de Perfil" />
+                <p>Bienvenido, <span id="user-role"></span></p>
+            </div>
+            <button id="logout-btn">Cerrar Sesión</button>
+        </header>
 
         <nav id="tabs">
             <button class="tab-button" data-tab="profile"><i class="fas fa-user"></i> Perfil</button>
-            <button class="tab-button active" data-tab="news"><i class="fas fa-newspaper"></i> Noticias</button>
+            <button class="tab-button" data-tab="news"><i class="fas fa-newspaper"></i> Noticias</button>
             <button class="tab-button" data-tab="debates"><i class="fas fa-comments"></i> Debates</button>
             <button class="tab-button" data-tab="games"><i class="fas fa-gamepad"></i> Juegos</button>
-            <button class="tab-button" data-tab="favorites" id="favorites-tab" style="display:none;"><i class="fas fa-heart"></i> Favoritos</button>
+            <button class="tab-button active" data-tab="favorites" id="favorites-tab"><i class="fas fa-heart"></i> Favoritos</button>
             <button class="tab-button" data-tab="about"><i class="fas fa-info-circle"></i> Acerca de</button>
         </nav>
 
         <section id="profile" class="section tab-content">
             <h2>Perfil de Usuario</h2>
             <p>Administra tu perfil y configuración.</p>
-            <div class="profile-pic-container">
-            </div>
+            <div class="profile-pic-container"></div>
 
             <div class="profile-update-section">
                 <h3>Actualizar Información</h3>
@@ -106,11 +112,11 @@
             </div>
         </section>
 
-        <section id="news" class="section tab-content active">
+        <section id="news" class="section tab-content">
             <h2>Noticias</h2>
             <p>Lee las últimas noticias sobre juegos.</p>
             <div id="news-list"></div>
-            <div id="news-form-container" style="display:none;">
+            <div id="news-form-container" style="display:block;">
                 <h3>Publicar noticia</h3>
                 <form id="news-form">
                     <label for="news-title">Título:</label>
@@ -130,10 +136,15 @@
             <div id="debate-list"></div>
             <div id="debate-form-container" style="display:none;">
                 <h3>Crear debate</h3>
-                <input type="text" id="debate-title" placeholder="Título del debate" />
-                <textarea id="debate-content" placeholder="Contenido del debate"></textarea>
-                <input type="file" id="debate-image" accept="image/*" />
-                <button id="post-debate-btn">Crear debate</button>
+                <form id="debate-form">
+                    <label for="debate-title">Título:</label>
+                    <input type="text" id="debate-title" name="title" placeholder="Título del debate" required />
+                    <label for="debate-content">Contenido:</label>
+                    <textarea id="debate-content" name="content" placeholder="Contenido del debate" required></textarea>
+                    <label for="debate-image">Imagen:</label>
+                    <input type="file" id="debate-image" name="image" accept="image/*" />
+                    <button type="submit">Crear debate</button>
+                </form>
             </div>
         </section>
 
@@ -142,22 +153,28 @@
             <div class="game-gallery" id="game-gallery"></div>
             <div id="game-form-container" style="display:none;">
                 <h3>Publicar juego</h3>
-                <input type="text" id="game-title" placeholder="Nombre del juego" />
-                <select id="game-category">
-                    <option value="action">Acción</option>
-                    <option value="strategy">Estrategia</option>
-                    <option value="adventure">Aventura</option>
-                    <option value="simulation">Simulación</option>
-                    <option value="sports">Deportes</option>
-                    <option value="rpg">RPG</option>
-                </select>
-                <textarea id="game-description" placeholder="Descripción del juego"></textarea>
-                <input type="file" id="game-image" accept="image/*" />
-                <button id="post-game-btn">Publicar Juego</button>
+                <form id="game-form">
+                    <label for="game-title">Nombre del juego:</label>
+                    <input type="text" id="game-title" name="title" placeholder="Nombre del juego" required />
+                    <label for="game-category">Categoría:</label>
+                    <select id="game-category" name="category">
+                        <option value="action">Acción</option>
+                        <option value="strategy">Estrategia</option>
+                        <option value="adventure">Aventura</option>
+                        <option value="simulation">Simulación</option>
+                        <option value="sports">Deportes</option>
+                        <option value="rpg">RPG</option>
+                    </select>
+                    <label for="game-description">Descripción:</label>
+                    <textarea id="game-description" name="description" placeholder="Descripción del juego" required></textarea>
+                    <label for="game-image">Imagen:</label>
+                    <input type="file" id="game-image" name="image" accept="image/*" />
+                    <button type="submit">Publicar Juego</button>
+                </form>
             </div>
         </section>
 
-        <section id="favorites" class="section tab-content">
+        <section id="favorites" class="section tab-content active">
             <h2>Favoritos</h2>
             <p>Tus comentarios guardados.</p>
             <div id="favorites-list"></div>

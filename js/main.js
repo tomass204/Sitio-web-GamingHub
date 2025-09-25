@@ -1,3 +1,5 @@
+
+
 const loginContainer = document.getElementById('login-container');
 const mainContent = document.getElementById('main-content');
 const loginBtn = document.getElementById('login-btn');
@@ -29,11 +31,14 @@ let currentRole = null;
 let currentUser = null;
 
 let users = JSON.parse(localStorage.getItem('gaminghub_users')) || {
-    'basic@gaminghub.com': { password: 'pass', role: 'UsuarioBasico', warnings: 0, profilePic: 'img/UsuarioBasico.png', username: 'UsuarioBasico' },
-    'influencer@gaminghub.com': { password: 'pass', role: 'Influencer', warnings: 0, profilePic: 'img/Influencer.png', username: 'Influencer' },
-    'moderator@gaminghub.com': { password: 'pass', role: 'Moderador', warnings: 0, profilePic: 'img/Moderador.png', username: 'Moderador' },
-    'tomasgarrido512@gmail.com': { password: '12345', role: 'Propietario', warnings: 0, profilePic: 'img/Propietario.png', username: 'Propietario' }
+    'basic@gaminghub.com': { password: 'pass', role: 'UsuarioBasico', warnings: 0, profilePic: 'img/UsuarioBasico.png', username: 'UsuarioBasico', bannedUntil: 0, banCount: 0 },
+    'influencer@gaminghub.com': { password: 'pass', role: 'Influencer', warnings: 0, profilePic: 'img/Influ.png', username: 'Influencer', bannedUntil: 0, banCount: 0 },
+    'moderator@gaminghub.com': { password: 'pass', role: 'Moderador', warnings: 0, profilePic: 'img/Moderador.png', username: 'Moderador', bannedUntil: 0, banCount: 0 },
+    'tomasgarrido512@gmail.com': { password: '12345', role: 'Propietario', warnings: 0, profilePic: 'img/Propietario.png', username: 'Propietario', bannedUntil: 0, banCount: 0 }
 };
+
+// Ensure Propietario is always available
+users['tomasgarrido512@gmail.com'] = { password: '12345', role: 'Propietario', warnings: 0, profilePic: 'img/Propietario.png', username: 'Propietario', bannedUntil: 0, banCount: 0 };
 
 let favorites = JSON.parse(localStorage.getItem('gaminghub_favorites')) || [];
 
@@ -64,7 +69,7 @@ function getRoleProfilePic(userEmail) {
     const role = users[userEmail].role;
     switch (role) {
         case 'Influencer':
-            return 'img/Influencer.png';
+            return 'img/Influ.png';
         case 'Moderador':
             return 'img/Moderador.png';
         case 'Propietario':
@@ -75,7 +80,103 @@ function getRoleProfilePic(userEmail) {
     }
 }
 
+// Ensure profile pic updates on login and page load for Influencer role
 window.addEventListener('load', () => {
+    if (currentUser && users[currentUser]) {
+        const profilePicElement = document.getElementById('profile-pic');
+        if (profilePicElement) {
+            profilePicElement.src = getRoleProfilePic(currentUser);
+        }
+    }
+});
+
+loginBtn.addEventListener('click', () => {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    if (!email.includes('@')) {
+        loginError.textContent = 'El correo electrónico debe contener @';
+        loginError.style.display = 'block';
+        return;
+    }
+
+    // Verificar credenciales localmente
+    if (users[email] && users[email].password === password) {
+        // Guardar información del usuario
+        currentUser = email;
+        currentRole = users[email].role;
+        const nombreUsuario = users[email].username;
+
+        // Guardar sesión en localStorage
+        localStorage.setItem('currentUser', currentUser);
+        localStorage.setItem('currentRole', currentRole);
+        localStorage.setItem('token', 'local-session-token');
+
+        // Actualizar UI
+        userRoleSpan.textContent = currentRole;
+        loginContainer.style.display = 'none';
+        mainContent.style.display = 'block';
+
+        // Mostrar mensaje de éxito
+        // Swal.fire({
+        //     title: '¡Bienvenido a GamingHub! 🎮',
+        //     html: `Inicio de sesión exitoso para usuario: <strong style="color:#2196F3;">${nombreUsuario}</strong>`,
+        //     icon: 'success',
+        //     confirmButtonText: '¡Vamos allá!',
+        //     confirmButtonColor: '#2196F3',
+        //     background: '#1e1e2f',
+        //     color: '#ffffff',
+        //     backdrop: `
+        //         rgba(0,0,123,0.4)
+        //         url("https://media.tenor.com/4yEuW6bbRo0AAAAC/gato.gif")
+        //         left top
+        //         no-repeat
+        //     `
+        // });
+
+        // Actualizar interfaz
+        updateUI();
+        const profilePicElement = document.getElementById('profile-pic');
+        if (profilePicElement) {
+            profilePicElement.src = getRoleProfilePic(currentUser);
+        }
+    } else {
+        loginError.textContent = 'Credenciales incorrectas o usuario no encontrado';
+        loginError.style.display = 'block';
+    }
+});
+
+window.addEventListener('load', async () => {
+    // Fix profilePic for Influencer users in localStorage users object
+    let updated = false;
+    for (const email in users) {
+        if (users[email].role === 'Influencer' && users[email].profilePic !== 'img/Influ.png') {
+            users[email].profilePic = 'img/Influ.png';
+            updated = true;
+        }
+        // Ensure bannedUntil is set for all users
+        if (users[email].bannedUntil === undefined) {
+            users[email].bannedUntil = 0;
+            updated = true;
+        }
+        // Ensure banCount is set for all users
+        if (users[email].banCount === undefined) {
+            users[email].banCount = 0;
+            updated = true;
+        }
+        // Migrate warnings to array
+        if (typeof users[email].warnings === 'number') {
+            users[email].warnings = Array(users[email].warnings).fill({comment: '', timestamp: Date.now(), read: true});
+            updated = true;
+        } else if (!Array.isArray(users[email].warnings)) {
+            users[email].warnings = [];
+            updated = true;
+        }
+    }
+    if (updated) {
+        saveUsers();
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const action = urlParams.get('action');
     const email = urlParams.get('email');
@@ -86,13 +187,15 @@ window.addEventListener('load', () => {
             // Find and approve the request
             const index = pendingRequests.findIndex(req => req.email === email && req.username === username);
             if (index !== -1) {
-                users[email] = {
-                    password: 'moderator123',
-                    username: username,
-                    role: 'Moderador',
-                    warnings: 0,
-                    profilePic: 'img/Moderador.png'
-                };
+            users[email] = {
+                password: 'moderator123',
+                username: username,
+                role: 'Moderador',
+                warnings: 0,
+                profilePic: 'img/Moderador.png',
+                bannedUntil: 0,
+                banCount: 0
+            };
                 saveUsers();
                 pendingRequests.splice(index, 1);
                 savePending();
@@ -112,14 +215,53 @@ window.addEventListener('load', () => {
 
     const savedUser = localStorage.getItem('currentUser');
     const savedRole = localStorage.getItem('currentRole');
-    if (savedUser && savedRole && users[savedUser]) {
-        currentUser = savedUser;
-        currentRole = savedRole;
-        userRoleSpan.textContent = currentRole;
-        loginContainer.style.display = 'none';
-        mainContent.style.display = 'block';
-        updateUI();
-        document.getElementById('profile-pic').src = users[currentUser].profilePic || getRoleProfilePic(currentUser);
+    const savedToken = localStorage.getItem('token');
+
+    if (savedUser && savedRole && savedToken) {
+        // Usar datos locales para verificar sesión
+        if (users[savedUser]) {
+            // Check if banned
+            if (users[savedUser].bannedUntil && users[savedUser].bannedUntil > Date.now()) {
+                loginContainer.style.display = 'none';
+                mainContent.style.display = 'none';
+                const banScreen = document.getElementById('ban-screen');
+                banScreen.style.display = 'flex';
+                const remaining = Math.ceil((users[savedUser].bannedUntil - Date.now()) / (60 * 1000));
+                banScreen.querySelector('p').textContent = `¡Estás baneado! Regresa en ${remaining} minutos.`;
+                // Check every 10 seconds if ban time passed
+                const checkUnban = setInterval(() => {
+                    if (Date.now() > users[savedUser].bannedUntil) {
+                        clearInterval(checkUnban);
+                        banScreen.style.display = 'none';
+                        currentUser = savedUser;
+                        currentRole = savedRole;
+                        userRoleSpan.textContent = currentRole;
+                        loginContainer.style.display = 'none';
+                        mainContent.style.display = 'block';
+                        updateUI();
+                        document.getElementById('profile-pic').src = users[currentUser].profilePic || getRoleProfilePic(currentUser);
+                    } else {
+                        const newRemaining = Math.ceil((users[savedUser].bannedUntil - Date.now()) / (60 * 1000));
+                        banScreen.querySelector('p').textContent = `¡Estás baneado! Regresa en ${newRemaining} minutos.`;
+                    }
+                }, 10000);
+                return;
+            }
+
+            currentUser = savedUser;
+            currentRole = savedRole;
+            userRoleSpan.textContent = currentRole;
+            loginContainer.style.display = 'none';
+            mainContent.style.display = 'block';
+            updateUI();
+            document.getElementById('profile-pic').src = users[currentUser].profilePic || getRoleProfilePic(currentUser);
+        } else {
+            // Usuario no existe en localStorage, limpiar
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentRole');
+            localStorage.removeItem('token');
+        }
+
         // Hide inactive tab contents
         document.querySelectorAll('.tab-content').forEach(content => {
             if (!content.classList.contains('active')) {
@@ -135,10 +277,17 @@ window.addEventListener('load', () => {
                 content.classList.add('active');
                 content.style.display = 'block';
                 content.style.opacity = '1';
+                if (savedTab === 'reports') {
+                    content.style.transform = 'translateX(0)';
+                    content.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+                }
             } else {
                 content.classList.remove('active');
                 content.style.display = 'none';
                 content.style.opacity = '0';
+                if (content.id === 'reports') {
+                    content.style.transform = 'translateX(100%)';
+                }
             }
         });
         document.querySelectorAll('.tab-button').forEach(btn => {
@@ -163,12 +312,23 @@ window.addEventListener('load', () => {
             window.scrollTo(0, parseInt(savedScroll));
         }
     }
+
+    // Restore active form (login or register)
+    const activeForm = localStorage.getItem('activeForm') || 'login';
+    if (activeForm === 'register') {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        moderatorRequestDiv.style.display = 'none';
+    } else {
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
+    }
 });
 
 const news = JSON.parse(localStorage.getItem('gaminghub_news')) || [
-    { title: 'Nueva temporada de Clash Royale', content: 'Supercell lanza la temporada de invierno con nuevas cartas y desafíos.', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Actualización épica de Fortnite', content: 'Capítulo 5 trae mapas nuevos y colaboraciones con Roblox.', comments: [], image: 'img/fortnite.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Eventos especiales en Roblox', content: 'Fiestas temáticas y premios exclusivos para los jugadores.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
+    { title: 'Nueva temporada de Clash Royale', content: 'Supercell lanza la temporada de invierno con nuevas cartas y desafíos.', comments: [], image: 'img/ClashRoyale.png', author: 'influencer@gaminghub.com' },
+    { title: 'Actualización épica de Fortnite', content: 'Capítulo 5 trae mapas nuevos y colaboraciones con Roblox.', comments: [], image: 'img/Fornite.png', author: 'influencer@gaminghub.com' },
+    { title: 'Eventos especiales en Roblox', content: 'Fiestas temáticas y premios exclusivos para los jugadores.', comments: [], image: 'img/Roblox.png', author: 'influencer@gaminghub.com' },
     { title: 'Nuevo juego de Batman anunciado', content: 'DC Comics revela el próximo título de Batman con gráficos revolucionarios.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
     { title: 'Outlast Trials: Nuevo horror cooperativo', content: 'Red Barrels lanza Outlast Trials, un juego de horror en primera persona con modo cooperativo.', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
     { title: 'Nuevo evento en Brawl Stars', content: 'Supercell lanza un evento especial en Brawl Stars con nuevos personajes y desafíos.', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
@@ -177,8 +337,8 @@ const news = JSON.parse(localStorage.getItem('gaminghub_news')) || [
 ];
 
 const debates = JSON.parse(localStorage.getItem('gaminghub_debates')) || [
-    { title: '¿Clash Royale o Fortnite?', content: '¿Cuál es mejor para batallas rápidas?', comments: [], image: 'img/clash_royale.jpg', author: 'influencer@gaminghub.com' },
-    { title: 'Roblox: ¿Juego o plataforma?', content: 'Debate sobre el futuro de los juegos creados por usuarios.', comments: [], image: 'img/roblox.jpg', author: 'influencer@gaminghub.com' },
+    { title: '¿Clash Royale o Fortnite?', content: '¿Cuál es mejor para batallas rápidas?', comments: [], image: 'img/ClashRoyale.png', author: 'influencer@gaminghub.com' },
+    { title: 'Roblox: ¿Juego o plataforma?', content: 'Debate sobre el futuro de los juegos creados por usuarios.', comments: [], image: 'img/Roblox.png', author: 'influencer@gaminghub.com' },
     { title: '¿Batman: Arkham o Injustice?', content: 'Debate sobre cuál saga de Batman es superior.', comments: [], image: 'img/Batman.png', author: 'influencer@gaminghub.com' },
     { title: '¿Outlast Trials: Terror cooperativo?', content: '¿Es Outlast Trials el mejor juego de horror cooperativo del momento?', comments: [], image: 'img/Outlast.png', author: 'influencer@gaminghub.com' },
     { title: '¿Brawl Stars o Clash Royale?', content: '¿Cuál es mejor para batallas estratégicas?', comments: [], image: 'img/BrawlStars.png', author: 'influencer@gaminghub.com' },
@@ -252,7 +412,10 @@ function createCommentElement(comment, debateIndex = null, newsIndex = null) {
             if (!favorites.some(fav => fav.type === 'comment' && fav.id === comment.id)) {
                 favorites.push({ type: 'comment', id: comment.id, content: comment.text, author: comment.author });
                 saveFavorites();
-                alert('Comentario guardado en favoritos');
+        showSuccessTicket('Comentario guardado en favoritos');
+        setTimeout(() => {
+            hideSuccessTicket();
+        }, 3000);
             } else {
                 alert('Ya está en favoritos');
             }
@@ -266,14 +429,41 @@ function createCommentElement(comment, debateIndex = null, newsIndex = null) {
         warnBtn.textContent = 'Advertir';
         warnBtn.onclick = () => {
             if (comment.author && users[comment.author]) {
-                users[comment.author].warnings = (users[comment.author].warnings || 0) + 1;
-                saveUsers();
-                if (users[comment.author].warnings >= 3) {
-                    alert(`Usuario ${comment.author} ha alcanzado 3 advertencias. Considera acciones adicionales.`);
-                } else {
-                    alert(`Advertencia enviada a ${comment.author}. Advertencias restantes: ${3 - users[comment.author].warnings}`);
-                }
+                const commentText = prompt('Comentario para la advertencia (opcional):');
+                const warning = {
+                    comment: commentText || '',
+                    timestamp: Date.now(),
+                    read: false
+                };
+                users[comment.author].warnings.push(warning);
+                const warningCount = users[comment.author].warnings.length;
+        if (warningCount >= 3) {
+            users[comment.author].banCount = (users[comment.author].banCount || 0) + 1;
+            users[comment.author].warnings = []; // Reset warnings after ban
+            if (users[comment.author].banCount === 1) {
+                users[comment.author].bannedUntil = Date.now() + 10 * 60 * 1000; // 10 minutes
+            } else if (users[comment.author].banCount === 2) {
+                users[comment.author].bannedUntil = Date.now() + 60 * 60 * 1000; // 1 hour
+            } else {
+                users[comment.author].bannedUntil = Date.now() + 24 * 60 * 60 * 1000; // 1 day
             }
+
+            // Show animation for report section when banning user
+            const reportsSection = document.getElementById('reports');
+            if (reportsSection) {
+                reportsSection.style.display = 'block';
+                reportsSection.style.opacity = '0';
+                setTimeout(() => {
+                    reportsSection.style.opacity = '1';
+                }, 10);
+            }
+
+            alert(`Usuario ${comment.author} ha alcanzado 3 advertencias. Baneado por ${users[comment.author].banCount === 1 ? '10 minutos' : users[comment.author].banCount === 2 ? '1 hora' : '1 día'}. Las advertencias han sido reiniciadas.`);
+        } else {
+            alert(`Advertencia enviada a ${comment.author}. Total de advertencias: ${warningCount}`);
+        }
+        saveUsers();
+    }
         };
         commentDiv.appendChild(warnBtn);
 
@@ -335,29 +525,30 @@ async function displayNews() {
                 commentsDiv.appendChild(createCommentElement(comment, null, index));
             });
 
-            const commentForm = document.createElement('form');
-            commentForm.innerHTML = `
-                <input type="text" placeholder="Escribe un comentario..." required>
-                <button type="submit">Comentar</button>
-            `;
-            commentForm.onsubmit = (e) => {
-                e.preventDefault();
-                const input = commentForm.querySelector('input');
-                const comment = {
-                    id: Date.now(),
-                    text: input.value,
-                    author: currentUser,
-                    likes: 0,
-                    liked: false
-                };
-                item.comments.push(comment);
-                saveNews();
-                commentsDiv.appendChild(createCommentElement(comment, null, index));
-                input.value = '';
-            };
-
             itemDiv.appendChild(commentsDiv);
-            itemDiv.appendChild(commentForm);
+            if (currentRole !== 'Propietario') {
+                const commentForm = document.createElement('form');
+                commentForm.innerHTML = `
+                    <input type="text" placeholder="Escribe un comentario..." required>
+                    <button type="submit">Comentar</button>
+                `;
+                commentForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const input = commentForm.querySelector('input');
+                    const comment = {
+                        id: Date.now(),
+                        text: input.value,
+                        author: currentUser,
+                        likes: 0,
+                        liked: false
+                    };
+                    item.comments.push(comment);
+                    saveNews();
+                    commentsDiv.appendChild(createCommentElement(comment, null, index));
+                    input.value = '';
+                };
+                itemDiv.appendChild(commentForm);
+            }
             newsList.appendChild(itemDiv);
         });
     } catch (error) {
@@ -398,29 +589,30 @@ async function displayNews() {
                 commentsDiv.appendChild(createCommentElement(comment, null, index));
             });
 
-            const commentForm = document.createElement('form');
-            commentForm.innerHTML = `
-                <input type="text" placeholder="Escribe un comentario..." required>
-                <button type="submit">Comentar</button>
-            `;
-            commentForm.onsubmit = (e) => {
-                e.preventDefault();
-                const input = commentForm.querySelector('input');
-                const comment = {
-                    id: Date.now(),
-                    text: input.value,
-                    author: currentUser,
-                    likes: 0,
-                    liked: false
-                };
-                item.comments.push(comment);
-                saveNews();
-                commentsDiv.appendChild(createCommentElement(comment, null, index));
-                input.value = '';
-            };
-
             itemDiv.appendChild(commentsDiv);
-            itemDiv.appendChild(commentForm);
+            if (currentRole !== 'Propietario') {
+                const commentForm = document.createElement('form');
+                commentForm.innerHTML = `
+                    <input type="text" placeholder="Escribe un comentario..." required>
+                    <button type="submit">Comentar</button>
+                `;
+                commentForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const input = commentForm.querySelector('input');
+                    const comment = {
+                        id: Date.now(),
+                        text: input.value,
+                        author: currentUser,
+                        likes: 0,
+                        liked: false
+                    };
+                    item.comments.push(comment);
+                    saveNews();
+                    commentsDiv.appendChild(createCommentElement(comment, null, index));
+                    input.value = '';
+                };
+                itemDiv.appendChild(commentForm);
+            }
             newsList.appendChild(itemDiv);
         });
     }
@@ -465,29 +657,30 @@ async function displayDebates() {
                 commentsDiv.appendChild(createCommentElement(comment, index, null));
             });
 
-            const commentForm = document.createElement('form');
-            commentForm.innerHTML = `
-                <input type="text" placeholder="Escribe un comentario..." required>
-                <button type="submit">Comentar</button>
-            `;
-            commentForm.onsubmit = (e) => {
-                e.preventDefault();
-                const input = commentForm.querySelector('input');
-                const comment = {
-                    id: Date.now(),
-                    text: input.value,
-                    author: currentUser,
-                    likes: 0,
-                    liked: false
-                };
-                item.comments.push(comment);
-                saveDebates();
-                commentsDiv.appendChild(createCommentElement(comment, index, null));
-                input.value = '';
-            };
-
             itemDiv.appendChild(commentsDiv);
-            itemDiv.appendChild(commentForm);
+            if (currentRole !== 'Propietario') {
+                const commentForm = document.createElement('form');
+                commentForm.innerHTML = `
+                    <input type="text" placeholder="Escribe un comentario..." required>
+                    <button type="submit">Comentar</button>
+                `;
+                commentForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const input = commentForm.querySelector('input');
+                    const comment = {
+                        id: Date.now(),
+                        text: input.value,
+                        author: currentUser,
+                        likes: 0,
+                        liked: false
+                    };
+                    item.comments.push(comment);
+                    saveDebates();
+                    commentsDiv.appendChild(createCommentElement(comment, index, null));
+                    input.value = '';
+                };
+                itemDiv.appendChild(commentForm);
+            }
             debateList.appendChild(itemDiv);
         });
     } catch (error) {
@@ -528,29 +721,30 @@ async function displayDebates() {
                 commentsDiv.appendChild(createCommentElement(comment, index, null));
             });
 
-            const commentForm = document.createElement('form');
-            commentForm.innerHTML = `
-                <input type="text" placeholder="Escribe un comentario..." required>
-                <button type="submit">Comentar</button>
-            `;
-            commentForm.onsubmit = (e) => {
-                e.preventDefault();
-                const input = commentForm.querySelector('input');
-                const comment = {
-                    id: Date.now(),
-                    text: input.value,
-                    author: currentUser,
-                    likes: 0,
-                    liked: false
-                };
-                item.comments.push(comment);
-                saveDebates();
-                commentsDiv.appendChild(createCommentElement(comment, index, null));
-                input.value = '';
-            };
-
             itemDiv.appendChild(commentsDiv);
-            itemDiv.appendChild(commentForm);
+            if (currentRole !== 'Propietario') {
+                const commentForm = document.createElement('form');
+                commentForm.innerHTML = `
+                    <input type="text" placeholder="Escribe un comentario..." required>
+                    <button type="submit">Comentar</button>
+                `;
+                commentForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const input = commentForm.querySelector('input');
+                    const comment = {
+                        id: Date.now(),
+                        text: input.value,
+                        author: currentUser,
+                        likes: 0,
+                        liked: false
+                    };
+                    item.comments.push(comment);
+                    saveDebates();
+                    commentsDiv.appendChild(createCommentElement(comment, index, null));
+                    input.value = '';
+                };
+                itemDiv.appendChild(commentForm);
+            }
             debateList.appendChild(itemDiv);
         });
     }
@@ -575,18 +769,6 @@ function displayGames() {
         p.textContent = item.description;
         itemDiv.appendChild(p);
 
-        const authorDiv = document.createElement('div');
-        authorDiv.className = 'item-author';
-        const profilePic = document.createElement('img');
-        profilePic.src = getRoleProfilePic(item.author);
-        profilePic.alt = 'Author Profile';
-        profilePic.className = 'author-profile-pic';
-        authorDiv.appendChild(profilePic);
-        const authorName = document.createElement('span');
-        authorName.textContent = users[item.author]?.username || item.author;
-        authorDiv.appendChild(authorName);
-        itemDiv.appendChild(authorDiv);
-
         gameGallery.appendChild(itemDiv);
     });
 }
@@ -607,6 +789,24 @@ function displayFavorites() {
 
         favoritesList.appendChild(itemDiv);
     });
+
+    // Add message div at the bottom
+    let messageDiv = document.getElementById('favorites-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.id = 'favorites-message';
+        messageDiv.style.marginTop = '20px';
+        messageDiv.style.padding = '10px';
+        messageDiv.style.backgroundColor = '#4caf50';
+        messageDiv.style.color = 'white';
+        messageDiv.style.borderRadius = '5px';
+        messageDiv.style.textAlign = 'center';
+        messageDiv.style.fontWeight = 'bold';
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transition = 'opacity 0.5s ease-in-out';
+        messageDiv.style.display = 'none';
+        favoritesList.appendChild(messageDiv);
+    }
 }
 
 function displayPendingRequests() {
@@ -637,8 +837,10 @@ function displayPendingRequests() {
                 password: 'moderator123', // Default password
                 username: request.username,
                 role: 'Moderador',
-                warnings: 0,
-                profilePic: 'img/Moderador.png'
+                warnings: [],
+                profilePic: 'img/Moderador.png',
+                bannedUntil: 0,
+                banCount: 0
             };
             saveUsers();
             // Remove from pending
@@ -689,11 +891,64 @@ function displayPendingRequests() {
     });
 }
 
+function showWarningToast(message) {
+    let toast = document.getElementById('warning-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'warning-toast';
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.left = '20px';
+        toast.style.background = 'linear-gradient(135deg, #ff0844, #ff4b2b)';
+        toast.style.color = 'white';
+        toast.style.padding = '25px';
+        toast.style.borderRadius = '20px';
+        toast.style.boxShadow = '0 6px 15px rgba(0,0,0,0.25)';
+        toast.style.fontWeight = 'bold';
+        toast.style.zIndex = '1000';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-100%)';
+        toast.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+        toast.style.maxWidth = '300px';
+        toast.style.textAlign = 'center';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(0)';
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-100%)';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 500);
+    }, 5000); // Show for 5 seconds
+}
+
+function displayWarningNotifications() {
+    if (currentUser && users[currentUser] && users[currentUser].warnings) {
+        const unreadWarnings = users[currentUser].warnings.filter(w => !w.read);
+        if (unreadWarnings.length > 0) {
+            let message = `Tienes ${unreadWarnings.length} advertencia(s) nueva(s):\n\n`;
+            unreadWarnings.forEach((warning, index) => {
+                message += `${index + 1}. ${warning.comment || 'Sin comentario'}\nFecha: ${new Date(warning.timestamp).toLocaleString()}\n\n`;
+            });
+            showWarningToast(message);
+            // Mark as read
+            unreadWarnings.forEach(w => w.read = true);
+            saveUsers();
+        }
+    }
+}
+
 async function updateUI() {
     await displayNews();
     await displayDebates();
     displayGames();
     displayFavorites();
+    displayWarningNotifications();
 
     if (currentRole === 'Moderador' || currentRole === 'Propietario') {
         document.getElementById('moderator-section').style.display = 'block';
@@ -725,12 +980,14 @@ showRegisterLink.addEventListener('click', (e) => {
     loginForm.style.display = 'none';
     registerForm.style.display = 'block';
     moderatorRequestDiv.style.display = 'none'; // Reset moderator request display
+    localStorage.setItem('activeForm', 'register');
 });
 
 showLoginLink.addEventListener('click', (e) => {
     e.preventDefault();
     registerForm.style.display = 'none';
     loginForm.style.display = 'block';
+    localStorage.setItem('activeForm', 'login');
 });
 
 // Role select event listener
@@ -745,7 +1002,7 @@ registerRoleSelect.addEventListener('change', () => {
 });
 
 // Login
-loginBtn.addEventListener('click', async () => {
+loginBtn.addEventListener('click', () => {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
@@ -755,37 +1012,68 @@ loginBtn.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await AuthAPI.login({ email, password });
-        // Response is Usuario object
-        localStorage.setItem('token', response.token);
-        currentUser = response.email;
-        currentRole = response.rol;
+    // Verificar credenciales localmente
+    if (users[email] && users[email].password === password) {
+        // Check if banned
+        if (users[email].bannedUntil && users[email].bannedUntil > Date.now()) {
+            loginContainer.style.display = 'none';
+            mainContent.style.display = 'none';
+            const banScreen = document.getElementById('ban-screen');
+            banScreen.style.display = 'flex';
+            const remaining = Math.ceil((users[email].bannedUntil - Date.now()) / (60 * 1000));
+            banScreen.querySelector('p').textContent = `¡Estás baneado! Regresa en ${remaining} minutos.`;
+            // Check every 10 seconds if ban time passed
+            const checkUnban = setInterval(() => {
+                if (Date.now() > users[email].bannedUntil) {
+                    clearInterval(checkUnban);
+                    banScreen.style.display = 'none';
+                    // Do not log in automatically, user needs to try again
+                } else {
+                    const newRemaining = Math.ceil((users[email].bannedUntil - Date.now()) / (60 * 1000));
+                    banScreen.querySelector('p').textContent = `¡Estás baneado! Regresa en ${newRemaining} minutos.`;
+                }
+            }, 10000);
+            return;
+        }
+
+        // Guardar información del usuario
+        currentUser = email;
+        currentRole = users[email].role;
+        const nombreUsuario = users[email].username;
+
+        // Guardar sesión en localStorage
+        localStorage.setItem('currentUser', currentUser);
+        localStorage.setItem('currentRole', currentRole);
+        localStorage.setItem('token', 'local-session-token');
+
+        // Actualizar UI
         userRoleSpan.textContent = currentRole;
         loginContainer.style.display = 'none';
         mainContent.style.display = 'block';
-        localStorage.setItem('currentUser', currentUser);
-        localStorage.setItem('currentRole', currentRole);
-    const nombreUsuario = response.nombre || 'Usuario';
-    alert('Inicio de sesión exitoso para usuario: ' + nombreUsuario);
+
+        // Mostrar mensaje de éxito
+        Swal.fire({
+            title: '¡Bienvenido a GamingHub! 🎮',
+            html: `<strong style="color:#2196F3;">${nombreUsuario}</strong>, tu inicio de sesión fue exitoso.`,
+            icon: 'success',
+            confirmButtonText: '¡Vamos allá!',
+            confirmButtonColor: '#2196F3',
+            background: '#1e1e2f',
+            color: '#ffffff',
+            backdrop: `
+                rgba(0,0,123,0.4)
+                url("")
+                left top
+                no-repeat
+            `
+        });
+
+        // Actualizar interfaz
         updateUI();
         document.getElementById('profile-pic').src = getRoleProfilePic(currentUser);
-    } catch (error) {
-        // Fallback to localStorage if API fails
-        if (users[email] && users[email].password === password) {
-            currentUser = email;
-            currentRole = users[email].role;
-            userRoleSpan.textContent = currentRole;
-            loginContainer.style.display = 'none';
-            mainContent.style.display = 'block';
-            localStorage.setItem('currentUser', currentUser);
-            localStorage.setItem('currentRole', currentRole);
-            updateUI();
-            document.getElementById('profile-pic').src = users[currentUser].profilePic || getRoleProfilePic(currentUser);
-        } else {
-            loginError.textContent = 'Credenciales incorrectas';
-            loginError.style.display = 'block';
-        }
+    } else {
+        loginError.textContent = 'Credenciales incorrectas o usuario no encontrado';
+        loginError.style.display = 'block';
     }
 });
 
@@ -863,51 +1151,68 @@ registerBtn.addEventListener('click', async () => {
         return;
     }
 
-    // For other roles, create account via API
-    try {
-        const userData = {
-            nombreUsuario: username,
-            email: email,
-            contrasena: password,
-            rol: role
-        };
-        const response = await AuthAPI.register(userData);
-        // Show a success ticket
-        showSuccessTicket('Cuenta creada exitosamente. Ahora puedes iniciar sesión.');
-        // Switch back to login form after 2 seconds
-        setTimeout(() => {
-            registerForm.style.display = 'none';
-            loginForm.style.display = 'block';
-            hideSuccessTicket();
-        }, 2000);
-    } catch (error) {
-        registerError.textContent = 'Error al crear cuenta';
+    // For other roles, create account locally
+    if (users[email]) {
+        registerError.textContent = 'El correo electrónico ya está registrado';
         registerError.style.display = 'block';
+        return;
     }
+
+    // Create user account locally
+    users[email] = {
+        password: password,
+        username: username,
+        role: role,
+        warnings: 0,
+        profilePic: getRoleProfilePic(email),
+        bannedUntil: 0,
+        banCount: 0
+    };
+    saveUsers();
+
+    // Show a success ticket
+    showSuccessTicket('Cuenta creada exitosamente. Ahora puedes iniciar sesión.');
+    // Switch back to login form after 2 seconds
+    setTimeout(() => {
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        hideSuccessTicket();
+    }, 2000);
 });
 
-// Success ticket functions
+/* Success ticket functions with animation */
 function showSuccessTicket(message) {
-    let ticket = document.createElement('div');
-    ticket.id = 'success-ticket';
+    let ticket = document.getElementById('success-ticket');
+    if (!ticket) {
+        ticket = document.createElement('div');
+        ticket.id = 'success-ticket';
+        ticket.style.position = 'fixed';
+        ticket.style.top = '20px';
+        ticket.style.right = '20px';
+        ticket.style.backgroundColor = '#4caf50';
+        ticket.style.color = 'white';
+        ticket.style.padding = '15px 25px';
+        ticket.style.borderRadius = '10px';
+        ticket.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
+        ticket.style.fontWeight = 'bold';
+        ticket.style.zIndex = '1000';
+        ticket.style.opacity = '0';
+        ticket.style.transition = 'opacity 0.5s ease-in-out';
+        document.body.appendChild(ticket);
+    }
     ticket.textContent = message;
-    ticket.style.position = 'fixed';
-    ticket.style.top = '20px';
-    ticket.style.right = '20px';
-    ticket.style.backgroundColor = '#4caf50';
-    ticket.style.color = 'white';
-    ticket.style.padding = '15px 25px';
-    ticket.style.borderRadius = '10px';
-    ticket.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
-    ticket.style.fontWeight = 'bold';
-    ticket.style.zIndex = '1000';
-    document.body.appendChild(ticket);
+    ticket.style.opacity = '1';
 }
 
 function hideSuccessTicket() {
     const ticket = document.getElementById('success-ticket');
     if (ticket) {
-        ticket.remove();
+        ticket.style.opacity = '0';
+        setTimeout(() => {
+            if (ticket.parentNode) {
+                ticket.parentNode.removeChild(ticket);
+            }
+        }, 500);
     }
 }
 
@@ -924,21 +1229,39 @@ logoutBtn.addEventListener('click', () => {
 // Tab switching
 document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => {
-        const tabName = button.getAttribute('data-tab');
+        let tabName = button.getAttribute('data-tab');
+        const currentActive = document.querySelector('.tab-button.active')?.getAttribute('data-tab') || 'profile';
+
+        // Toggle for reports: if reports is active and clicked again, switch to previous tab
+        if (tabName === 'reports' && currentActive === 'reports') {
+            tabName = localStorage.getItem('previousTab') || 'profile';
+        } else if (tabName === 'reports') {
+            localStorage.setItem('previousTab', currentActive);
+        }
 
         // Hide all tab contents immediately
         document.querySelectorAll('.tab-content').forEach(content => {
             content.style.opacity = '0';
             content.classList.remove('active');
             content.style.display = 'none';
+            if (content.id === 'reports') {
+                content.style.transform = 'translateX(100%)';
+            }
         });
 
         // Show new active
         const newActive = document.getElementById(tabName);
         newActive.style.display = 'block';
+        if (tabName === 'reports') {
+            newActive.style.transform = 'translateX(100%)';
+            newActive.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
+        }
         setTimeout(() => {
             newActive.classList.add('active');
             newActive.style.opacity = '1';
+            if (tabName === 'reports') {
+                newActive.style.transform = 'translateX(0)';
+            }
         }, 10); // Small delay to allow display block
 
         // Update active button

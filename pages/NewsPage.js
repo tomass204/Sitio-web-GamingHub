@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
@@ -9,6 +9,11 @@ const NewsPage = ({ user }) => {
     content: '',
     image: null
   });
+
+  useEffect(() => {
+    const savedNews = JSON.parse(localStorage.getItem('gaminghub_news')) || [];
+    setNewsList(savedNews);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -28,6 +33,9 @@ const NewsPage = ({ user }) => {
       image: formData.image,
       author: user?.username
     };
+    const savedNews = JSON.parse(localStorage.getItem('gaminghub_news')) || [];
+    savedNews.push(newNews);
+    localStorage.setItem('gaminghub_news', JSON.stringify(savedNews));
     setNewsList([...newsList, newNews]);
     setFormData({ title: '', content: '', image: null });
   };
@@ -38,7 +46,7 @@ const NewsPage = ({ user }) => {
       <main>
         <section id="news">
           <h2>Noticias</h2>
-          {user && (
+          {user && user.role === 'Influencer' && (
             <form onSubmit={handleSubmit}>
               <label htmlFor="news-title">Título de la Noticia:</label>
               <input

@@ -1,72 +1,89 @@
-const API_BASE_URL = 'http://localhost:8083';
-
 class NewsAPI {
     static async getAllNews() {
-        const response = await fetch(`${API_BASE_URL}/publicaciones`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        // Datos locales simulados para noticias
+        const mockNews = [
+            {
+                id: 1,
+                titulo: "GamingHub: La nueva era del gaming",
+                contenido: "Bienvenidos a GamingHub, tu comunidad definitiva para gamers. Aquí encontrarás las últimas noticias, reseñas y debates sobre el mundo del gaming.",
+                fechaPublicacion: new Date().toISOString(),
+                autor: "Sistema",
+                categoria: "Noticias",
+                imagen: "img/gaming-default.jpg"
             },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to get news');
-        }
-        return response.json();
+            {
+                id: 2,
+                titulo: "Mejores juegos de 2024",
+                contenido: "Descubre los títulos más esperados de este año. Desde RPGs épicos hasta shooters intensos, te presentamos lo mejor del gaming actual.",
+                fechaPublicacion: new Date().toISOString(),
+                autor: "Sistema",
+                categoria: "Reseñas",
+                imagen: "img/games-2024.jpg"
+            },
+            {
+                id: 3,
+                titulo: "Consejos para nuevos jugadores",
+                contenido: "Guía completa para principiantes en el mundo del gaming. Aprende los conceptos básicos y cómo mejorar tu experiencia de juego.",
+                fechaPublicacion: new Date().toISOString(),
+                autor: "Sistema",
+                categoria: "Tutoriales",
+                imagen: "img/beginners-guide.jpg"
+            }
+        ];
+
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return { content: mockNews };
     }
 
     static async createNews(newsData) {
-        const response = await fetch(`${API_BASE_URL}/publicaciones`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(newsData),
-        });
-        if (!response.ok) {
-            throw new Error('Failed to create news');
-        }
-        return response.json();
+        // Simular creación local
+        const newNews = {
+            id: Date.now(),
+            titulo: newsData.titulo,
+            contenido: newsData.contenido,
+            fechaPublicacion: new Date().toISOString(),
+            autor: "Usuario",
+            categoria: newsData.categoria || "General",
+            imagen: newsData.imagen || "img/default-publication.jpg"
+        };
+
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 200));
+        return { content: newNews };
     }
 
     static async getNewsById(newsId) {
-        const response = await fetch(`${API_BASE_URL}/publicaciones/${newsId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to get news');
+        const news = await this.getAllNews();
+        const newsItem = news.content.find(n => n.id === parseInt(newsId));
+
+        if (!newsItem) {
+            throw new Error('News not found');
         }
-        return response.json();
+
+        return { content: newsItem };
     }
 
     static async updateNews(newsId, newsData) {
-        const response = await fetch(`${API_BASE_URL}/publicaciones/${newsId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(newsData),
-        });
-        if (!response.ok) {
-            throw new Error('Failed to update news');
-        }
-        return response.json();
+        // Simular actualización local
+        const updatedNews = {
+            id: parseInt(newsId),
+            titulo: newsData.titulo,
+            contenido: newsData.contenido,
+            fechaPublicacion: new Date().toISOString(),
+            autor: "Usuario",
+            categoria: newsData.categoria || "General",
+            imagen: newsData.imagen || "img/default-publication.jpg"
+        };
+
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 200));
+        return { content: updatedNews };
     }
 
     static async deleteNews(newsId) {
-        const response = await fetch(`${API_BASE_URL}/publicaciones/${newsId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
-        if (!response.ok) {
-            throw new Error('Failed to delete news');
-        }
-        return response.json();
+        // Simular eliminación local
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return { content: { message: 'News deleted successfully' } };
     }
 }
