@@ -1,6 +1,6 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import NewsCard from '../../components/NewsCard';
+const React = require('react');
+const { render, screen, fireEvent } = require('@testing-library/react');
+const NewsCard = require('../../components/NewsCard.jsx');
 
 describe('NewsCard Component', () => {
   const mockProps = {

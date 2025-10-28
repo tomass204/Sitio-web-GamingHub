@@ -1,7 +1,7 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import Header from '../../components/Header';
+const React = require('react');
+const { render, screen, fireEvent } = require('@testing-library/react');
+const { BrowserRouter } = require('react-router-dom');
+const Header = require('../../components/Header');
 
 describe('Header Component', () => {
   const mockLinks = [
