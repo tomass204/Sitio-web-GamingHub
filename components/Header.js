@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Header = ({ user, onLogout }) => {
+const Header = ({ title, links }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -9,47 +10,44 @@ const Header = ({ user, onLogout }) => {
     navigate(path);
   };
 
-  return (
-    <header>
-      <img src="img/gaminghub_logo.png" alt="Gaming Hub Logo" id="logo" />
-      <div>
-        <h1>GamingHub - Comunidad de Juegos</h1>
-        <p>Debates, noticias y comunidad de juegos populares</p>
-      </div>
-      {user && (
-        <div className="user-profile">
-          <img id="profile-pic" src={user?.profilePic || "img/default_profile.png"} alt="Foto de Perfil" />
-          <p>Bienvenido, <span id="user-role">{user?.role || "Usuario"}</span></p>
-        </div>
-      )}
-      {user && <button id="logout-btn" onClick={onLogout}>Cerrar Sesión</button>}
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
-      <nav id="tabs">
-        {user && (
-          <>
-            <button className={`tab-button ${location.pathname === '/profile' ? 'active' : ''}`} onClick={() => handleTabClick('/profile')}>
-              <i className="fas fa-user"></i> Perfil
-            </button>
-            <button className={`tab-button ${location.pathname === '/news' ? 'active' : ''}`} onClick={() => handleTabClick('/news')}>
-              <i className="fas fa-newspaper"></i> Noticias
-            </button>
-            <button className={`tab-button ${location.pathname === '/debates' ? 'active' : ''}`} onClick={() => handleTabClick('/debates')}>
-              <i className="fas fa-comments"></i> Debates
-            </button>
-            <button className={`tab-button ${location.pathname === '/games' ? 'active' : ''}`} onClick={() => handleTabClick('/games')}>
-              <i className="fas fa-gamepad"></i> Juegos
-            </button>
-            {(user?.role === 'Influencer' || user?.role === 'Moderador') && (
-              <button className={`tab-button ${location.pathname === '/favorites' ? 'active' : ''}`} onClick={() => handleTabClick('/favorites')}>
-                <i className="fas fa-heart"></i> Favoritos
+  return (
+    <header className="bg-dark text-light p-3">
+      <div className="container-fluid">
+        <div className="row align-items-center">
+          <div className="col-md-6">
+            <img src="img/gaminghub_logo.png" alt="Gaming Hub Logo" id="logo" className="img-fluid" style={{ maxHeight: '50px' }} />
+            <div className="d-inline-block ms-3">
+              <h1 className="h4 mb-0">{title || 'GamingHub - Comunidad de Juegos'}</h1>
+              <p className="mb-0">Debates, noticias y comunidad de juegos populares</p>
+            </div>
+          </div>
+          <div className="col-md-6 text-end">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark p-0">
+              <button className="navbar-toggler" type="button" onClick={toggleMenu}>
+                <span className="navbar-toggler-icon"></span>
               </button>
-            )}
-          </>
-        )}
-        <button className={`tab-button ${location.pathname === '/about' ? 'active' : ''}`} onClick={() => handleTabClick('/about')}>
-          <i className="fas fa-info-circle"></i> Acerca de
-        </button>
-      </nav>
+              <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`}>
+                <ul className="navbar-nav ms-auto">
+                  {(links || []).map((link, index) => (
+                    <li key={index} className="nav-item">
+                      <button
+                        className={`nav-link btn btn-link ${location.pathname === link.path ? 'active' : ''}`}
+                        onClick={() => handleTabClick(link.path)}
+                      >
+                        <i className={link.icon}></i> {link.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
     </header>
   );
 };
